@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Threading.Tasks;
 
 namespace LessonInSteam.Controllers
 {
@@ -16,25 +17,27 @@ namespace LessonInSteam.Controllers
         [Route("Register")]
         [HttpPost]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public async System.Threading.Tasks.Task RegisterUserAsync([FromBody]User newUser)
+        public async Task RegisterUserAsync([FromBody]User newUser)
         {
             DatabaseService DBService = new DatabaseService();
 
             await DBService.RegisterUserToDBAsync(newUser);
         }
-        
+
         [Route("Login")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public string GetPasswordForUser([FromBody]User user)
+        public string LoginUser([FromBody]User user)
         {
             DatabaseService DBService = new DatabaseService();
 
-            string hashedPassword = DBService.ReturnUserHashPassword(user);
+            string accepted;
 
-            return hashedPassword;
+            accepted = DBService.LoginUser(user);
+
+            return accepted;
         }
-        
+
         [Route("UpdateUser")]
         [HttpPost]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -44,7 +47,7 @@ namespace LessonInSteam.Controllers
 
             DBService.UpdateUserPassword(user);
         }
-        
+
         [Route("DeleteUser")]
         [HttpPost]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -53,6 +56,20 @@ namespace LessonInSteam.Controllers
             DatabaseService DBService = new DatabaseService();
 
             DBService.DeleteUserFromLoginTable(user);
+        }
+
+        [Route("GetUserSteamGameInfo")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public List<SteamGame> GetUserSteamGameInfo([FromBody] User user)
+        {
+            DatabaseService DBService = new DatabaseService();
+
+            List<SteamGame> UserSteamGameList = new List<SteamGame>();
+
+            UserSteamGameList = DBService.GetUserSteamGameInfo(user);
+
+            return UserSteamGameList;
         }
     }
 }
