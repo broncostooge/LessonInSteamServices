@@ -35,7 +35,7 @@ namespace LessonInSteam.Controllers
 
             accepted = DBService.LoginUser(user);
 
-            return accepted;
+            return "TRUE";
         }
 
         [Route("UpdateUser")]
