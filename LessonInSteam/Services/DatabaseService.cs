@@ -136,7 +136,7 @@ namespace LessonInSteam.Services
             cnn.Close();
         }
 
-        public List<SteamGame> GetUserSteamGameInfo(User user)
+        public List<SteamGame> GetUserSteamGameInfoFromDB(User user)
         {
 
             List<SteamGame> UserSteamGameList = new List<SteamGame>();
@@ -168,6 +168,26 @@ namespace LessonInSteam.Services
 
             return UserSteamGameList;
 
+        }
+
+        public async Task<List<SteamGame>> GetUserSteamGameInfoFromSteamAPI(User user)
+        {
+            SteamDataService SteamData = new SteamDataService();
+            SteamUserContainer SteamUser = new SteamUserContainer();
+            SteamGameContainer SteamGameList = new SteamGameContainer();
+
+            string steamUserID;
+            List<SteamGame> games;
+
+            SteamUser = await SteamData.GetSteamUser64IDAsync(user.username);
+
+            steamUserID = SteamUser.response.steamID;
+
+            SteamGameList = await SteamData.GetUsersGames(steamUserID);
+
+            games = SteamGameList.response.games;
+
+            return games;
         }
     }
 }

@@ -58,7 +58,7 @@ namespace LessonInSteam.Controllers
             DBService.DeleteUserFromLoginTable(user);
         }
 
-        [Route("GetUserSteamGameInfo")]
+        [Route("GetUserSteamGameInfoFromDB")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public List<SteamGame> GetUserSteamGameInfo([FromBody] User user)
@@ -67,7 +67,21 @@ namespace LessonInSteam.Controllers
 
             List<SteamGame> UserSteamGameList = new List<SteamGame>();
 
-            UserSteamGameList = DBService.GetUserSteamGameInfo(user);
+            UserSteamGameList = DBService.GetUserSteamGameInfoFromDB(user);
+
+            return UserSteamGameList;
+        }
+
+        [Route("GetUserSteamGameInfoFromSteamAPI")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<List<SteamGame>> GetUserSteamGameInfoFromSteamAPIAsync([FromBody] User user)
+        {
+            DatabaseService DBService = new DatabaseService();
+
+            List<SteamGame> UserSteamGameList = new List<SteamGame>();
+
+            UserSteamGameList = await DBService.GetUserSteamGameInfoFromSteamAPI(user);
 
             return UserSteamGameList;
         }
