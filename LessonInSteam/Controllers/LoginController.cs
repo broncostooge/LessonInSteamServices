@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace LessonInSteam.Controllers
 {
@@ -75,13 +76,27 @@ namespace LessonInSteam.Controllers
         [Route("GetUserSteamGameInfoFromSteamAPI")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public async Task<List<SteamGame>> GetUserSteamGameInfoFromSteamAPIAsync([FromBody] User user)
+        public async Task<List<SteamGame>> GetUserSteamGameInfoFromSteamAPI([FromBody] User user)
         {
             DatabaseService DBService = new DatabaseService();
 
             List<SteamGame> UserSteamGameList = new List<SteamGame>();
 
             UserSteamGameList = await DBService.GetUserSteamGameInfoFromSteamAPI(user);
+
+            return UserSteamGameList;
+        }
+        
+        [Route("UpdateAndLoadUserSteamInfo")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<List<SteamGame>> UpdateAndLoadUserSteamInfoAsync([FromBody] User user)
+        {
+            DatabaseService DBService = new DatabaseService();
+
+            List<SteamGame> UserSteamGameList = new List<SteamGame>();
+
+            UserSteamGameList = await DBService.UpdateAndLoadUserSteamInfoAsync(user);
 
             return UserSteamGameList;
         }

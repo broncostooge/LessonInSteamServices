@@ -117,8 +117,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\SteamGameInfo.cs" />
     <Compile Include="Models\SteamGame.cs" />
     <Compile Include="Models\SteamUser.cs" />
+    <Compile Include="Models\Game.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DatabaseService.cs" />
