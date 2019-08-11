@@ -41,6 +41,7 @@ namespace LessonInSteam.Services
             using (HttpResponseMessage response = await client.GetAsync(steamGameAPI + keyParameter + steamAPIKey + steamID + steamuser64ID + formatJSON + "&include_appinfo=1"))
             using (HttpContent content = response.Content)
             {
+                string r = steamGameAPI + keyParameter + steamAPIKey + steamID + steamuser64ID + formatJSON + "&include_appinfo=1";
                 string result = await content.ReadAsStringAsync();
 
                 SteamGameContainer SteamUserGameList = JsonConvert.DeserializeObject<SteamGameContainer>(result);

@@ -86,7 +86,7 @@ namespace LessonInSteam.Controllers
 
             return UserSteamGameList;
         }
-        
+
         [Route("UpdateAndLoadUserSteamInfo")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -99,6 +99,19 @@ namespace LessonInSteam.Controllers
             UserSteamGameList = await DBService.UpdateAndLoadUserSteamInfoAsync(user);
 
             return UserSteamGameList;
+        }
+
+        [Route("VerifySteamUserName")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<SteamUserContainer> VerifySteamUserNameAsync([FromBody] User user)
+        {
+            SteamUserContainer SteamUser = new SteamUserContainer();
+            SteamDataService SteamData = new SteamDataService();
+
+            SteamUser = await SteamData.GetSteamUser64IDAsync(user.username);
+
+            return SteamUser;
         }
     }
 }

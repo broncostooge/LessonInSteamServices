@@ -203,6 +203,7 @@ namespace LessonInSteam.Services
             List<SteamGame> gamesFromAPI;
             List<SteamGame> gamesFromDB;
 
+            //TODO: Put in check if cant get steam user id from username
             //GET USER'S STEAM 64 ID FROM USERNAME
             SteamUser = await SteamData.GetSteamUser64IDAsync(user.username);
             steamUserID = SteamUser.response.steamID;
@@ -214,15 +215,23 @@ namespace LessonInSteam.Services
             AddUserSteamIDToTable(user, steamUserID, cmd);
             cnn.Close();
 
-            //GET USER'S GAMES FROM API CALL
-            SteamGameList = await SteamData.GetUsersGames(steamUserID);
-            gamesFromAPI = SteamGameList.response.games;
+            try
+            {
+                //TODO: Put in check if cant get game list from Steam
+                //GET USER'S GAMES FROM API CALL
+                SteamGameList = await SteamData.GetUsersGames(steamUserID);
+                gamesFromAPI = SteamGameList.response.games;
 
-            //STORE/UPDATE GAMES IN DB
-            cnn = new SqlConnection(connectionString);
-            cnn.Open();
-            AddUserGameListToTable(gamesFromAPI, steamUserID, cmd);
-            cnn.Close();
+                //STORE/UPDATE GAMES IN DB
+                cnn = new SqlConnection(connectionString);
+                cnn.Open();
+                AddUserGameListToTable(gamesFromAPI, steamUserID, cmd);
+                cnn.Close();
+            }
+            catch(Exception e)
+            {
+
+            }
 
             //GET GAMES FROM DB
             gamesFromDB = GetUserSteamGameInfoFromDB(user);
