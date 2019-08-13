@@ -90,7 +90,7 @@ namespace LessonInSteam.Controllers
         [Route("UpdateAndLoadUserSteamInfo")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public async Task<List<SteamGame>> UpdateAndLoadUserSteamInfoAsync([FromBody] User user)
+        public async Task<string> UpdateAndLoadUserSteamInfoAsync([FromBody] User user)
         {
             DatabaseService DBService = new DatabaseService();
 
@@ -98,7 +98,7 @@ namespace LessonInSteam.Controllers
 
             UserSteamGameList = await DBService.UpdateAndLoadUserSteamInfoAsync(user);
 
-            return UserSteamGameList;
+            return "hello";
         }
 
         [Route("VerifySteamUserName")]
