@@ -101,6 +101,22 @@ namespace LessonInSteam.Controllers
             return UserSteamGameList;
         }
 
+        [Route("UpdateAndLoadUserSteamInfoFrom64ID")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<List<SteamGame>> UpdateAndLoadUserSteamInfoFrom64IDAsync([FromBody] User user)
+        {
+            DatabaseService DBService = new DatabaseService();
+
+            List<SteamGame> UserSteamGameList = new List<SteamGame>();
+
+            long steamID = Int64.Parse(user.username);
+
+            UserSteamGameList = await DBService.UpdateAndLoadUserSteamInfoFrom64IDAsync(steamID);
+
+            return UserSteamGameList;
+        }
+
         [Route("VerifySteamUserName")]
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -112,6 +128,22 @@ namespace LessonInSteam.Controllers
             SteamUser = await SteamData.GetSteamUser64IDAsync(user.username);
 
             return SteamUser;
+        }
+
+        [Route("VerifySteam64ID")]
+        [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<bool> VerifySteamIDAsync([FromBody] User user)
+        {
+            bool foundUser = false;
+            SteamUserContainer SteamUser = new SteamUserContainer();
+            SteamDataService SteamData = new SteamDataService();
+
+            long steamID = Int64.Parse(user.username);
+
+            foundUser = await SteamData.VerifySteam64IDAsync(steamID);
+
+            return foundUser;
         }
     }
 }

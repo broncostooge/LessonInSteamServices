@@ -15,11 +15,34 @@ namespace LessonInSteam.Services
         private string steamAPIKey = "3F1EEFCCC0C8F311EFD50A76A5C26E68";
         private string steamUserAPI = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/";
         private string steamGameAPI = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
+        private string SteamPlayerAPI = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/";
+        private string steamIDs = "&steamids=";
         private string steamID = "&steamid=";
         private string formatJSON = "&format=json";
         private string keyParameter = "?key=";
         private string steamUserParameter = "&vanityurl=";
         private static readonly HttpClient client = new HttpClient();
+
+        public async Task<bool> VerifySteam64IDAsync(long steamID)
+        {
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.GetAsync(SteamPlayerAPI + keyParameter + steamAPIKey + steamIDs + steamID))
+            using (HttpContent content = response.Content)
+            {
+                bool foundUser = false;
+
+                string result = await content.ReadAsStringAsync();
+
+                PlayerContainer player = JsonConvert.DeserializeObject<PlayerContainer>(result);
+
+                if (player.response.Player.Count() > 0)
+                {
+                    foundUser = true;
+                }
+
+                return foundUser;
+            }
+        }
 
         public async Task<SteamUserContainer> GetSteamUser64IDAsync(string steamUserName)
         {

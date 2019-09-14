@@ -12,8 +12,8 @@ namespace LessonInSteam.Services
 {
     public class DatabaseService
     {
-        string connectionString = "Server=tcp:steamgamereview.database.windows.net,1433;Initial Catalog=LessonInSteam;Persist Security Info=False;User ID=broncostooge;Password=Toyota86!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-        //string connectionString = "Data Source=DESKTOP-57RKN8F;Initial Catalog=LessonInSteam;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        //string connectionString = "Server=tcp:steamgamereview.database.windows.net,1433;Initial Catalog=LessonInSteam;Persist Security Info=False;User ID=broncostooge;Password=Toyota86!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        string connectionString = "Data Source=DESKTOP-57RKN8F;Initial Catalog=LessonInSteam;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         SqlConnection cnn;
         SqlDataAdapter adapter = new SqlDataAdapter();
@@ -192,6 +192,53 @@ namespace LessonInSteam.Services
             return games;
         }
 
+        public async Task<List<SteamGame>> UpdateAndLoadUserSteamInfoFrom64IDAsync(long steamID)
+        {
+            SteamDataService SteamData = new SteamDataService();
+            SteamUserContainer SteamUser = new SteamUserContainer();
+            SteamGameContainer SteamGameList = new SteamGameContainer();
+
+            string steamUserID;
+            List<SteamGame> gamesFromAPI;
+            List<SteamGame> gamesFromDB;
+           
+            //STORE/UPDATE USER'S INFO IN DB
+            cnn = new SqlConnection(connectionString);
+            cnn.Open();
+            SqlCommand cmd = new SqlCommand();
+
+            User steamUser64ID = new User();
+
+            steamUser64ID.username = "NoSteamUserName";
+
+            string steamDBID = steamID.ToString();
+
+            AddUserSteamIDToTable(steamUser64ID, steamDBID, cmd);
+            cnn.Close();
+
+            try
+            {
+                //TODO: Put in check if cant get game list from Steam
+                //GET USER'S GAMES FROM API CALL
+                SteamGameList = await SteamData.GetUsersGames(steamDBID);
+                gamesFromAPI = SteamGameList.response.games;
+
+                //STORE/UPDATE GAMES IN DB
+                cnn = new SqlConnection(connectionString);
+                cnn.Open();
+                AddUserGameListToTable(gamesFromAPI, steamDBID, cmd);
+                cnn.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            //GET GAMES FROM DB
+            gamesFromDB = GetUserSteamGameInfoFromDB(steamUser64ID);
+
+            return gamesFromDB;
+        }
 
         public async Task<List<SteamGame>> UpdateAndLoadUserSteamInfoAsync(User user)
         {
